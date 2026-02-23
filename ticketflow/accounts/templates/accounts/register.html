@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="{% static 'accounts/register.css' %}">
+</head>
+<body>
+  <div class="blob"></div>
+
+<div class="container">
+  <h2>Create Account</h2>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="input-box">
+      <input type="text" name="username" placeholder="Enter your Username" required>
+    </div>
+    <div class="input-box">
+      <input type="email" name="email" placeholder="Enter your Email" required>
+    </div>
+    <div class="input-box">
+      <input type="password" name="password" placeholder="Enter your Password" required>
+    </div>
+    <div class="input-box">
+      <input type="password" name="confirm_password" placeholder="Confirm your Password" required>
+    </div>
+    <button type="submit">Register</button>
+    {% if error %}
+      <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <a href="/accounts/login/" class="form-link">
+      Already have an account? Login
+    </a>
+  </form>
+</div>
+    
+</body>
+</html>

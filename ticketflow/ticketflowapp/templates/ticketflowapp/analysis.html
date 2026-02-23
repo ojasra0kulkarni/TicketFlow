@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ticket Analytics Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'ticketflowapp/analytics.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+
+<div class="dashboard">
+    <h1> Ticket Analytics Dashboard</h1>
+
+    <div class="card-grid">
+        <div class="card">
+            <h2>Total Tickets</h2>
+            <p>{{ total }}</p>
+        </div>
+
+        <div class="card">
+            <h2>Average Resolution Time</h2>
+            <p>{{ avg_resolution }}</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>Status Breakdown</h3>
+        <ul>
+            {% for s in status_data %}
+            <li>
+                {{ s.status }}
+                <span class="badge">{{ s.total }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="section">
+        <h3>Priority Distribution</h3>
+        <ul>
+            {% for p in priority_data %}
+            <li>
+                {{ p.priority }}
+                <span class="badge priority">{{ p.total }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="section">
+        <h3>Top Cities</h3>
+        <ul>
+            {% for c in city_data %}
+            <li>
+                {{ c.address }}
+                <span class="badge city">{{ c.total }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h3>🔥 Open % by Priority</h3>
+        {% if heat_chart %}
+            <img src="{{ heat_chart }}" class="chart-img">
+        {% else %}
+            <p>No data available.</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h3>⏳ Avg Resolution Time by Priority</h3>
+        {% if avg_chart %}
+            <img src="{{ avg_chart }}" class="chart-img">
+        {% else %}
+            <p>No resolved tickets yet.</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h3>🚨 Escalation Risk Meter</h3>
+        {% if risk_chart %}
+            <img src="{{ risk_chart }}" class="chart-img">
+        {% endif %}
+        <p><strong>Current Risk:</strong> {{ risk_percent }}%</p>
+    </div>
+
+    <div class="section">
+      <h3>🏆 Top 5 Problem Cities</h3>
+      {% if top5_chart %}
+          <img src="{{ top5_chart }}" class="chart-img">
+      {% endif %}
+    </div>
+    <div class="card-grid">
+    <div class="card">
+        <h2>🏎️ Fastest Resolving City</h2>
+        <p>{{ fastest_city }}</p>
+    </div>
+
+    <div class="card">
+        <h2>🐢 Slowest Resolving City</h2>
+        <p>{{ slowest_city }}</p>
+    </div>
+    </div>
+
+    <div class="section">
+        <h3>🏅 City Performance Leaderboard</h3>
+        {% if leaderboard_chart %}
+            <img src="{{ leaderboard_chart }}" class="chart-img">
+        {% endif %}
+    </div>
+
+</div>
+
+
+
+</body>
+</html>

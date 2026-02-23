@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Portal</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 font-sans flex flex-col min-h-screen">
+
+    <!-- NAVBAR -->
+    <nav class="bg-white shadow-md p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-blue-600">JobPortal</h1>
+
+        <div class="space-x-6">
+            <a href="/" class="text-gray-600 hover:text-blue-600">Home</a>
+            <a href="#" class="text-gray-600 hover:text-blue-600">Jobs</a>
+            <a href="/users/login/" class="text-gray-600 hover:text-blue-600">Login</a>
+            <a href="/users/register/" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                Register
+            </a>
+            <a href="/users/logout/" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                Logout
+            </a>
+            
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-gray-300 mt-10">
+        <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-3 gap-8">
+
+            <!-- About Section -->
+            <div>
+                <h2 class="text-xl font-semibold text-white mb-4">JobPortal</h2>
+                <p class="text-sm">
+                    We help people find their dream jobs and companies find the right talent.
+                </p>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h2 class="text-lg font-semibold text-white mb-4">Quick Links</h2>
+                <ul class="space-y-2">
+                    <li><a href="#" class="hover:text-white">Browse Jobs</a></li>
+                    <li><a href="#" class="hover:text-white">Companies</a></li>
+                    <li><a href="#" class="hover:text-white">About Us</a></li>
+                    <li><a href="#" class="hover:text-white">Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div>
+                <h2 class="text-lg font-semibold text-white mb-4">Contact</h2>
+                <p class="text-sm">Email: support@jobportal.com</p>
+                <p class="text-sm">Phone: +91 98765 43210</p>
+                <p class="text-sm">India</p>
+            </div>
+
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="bg-gray-800 text-center py-4 text-sm">
+            © 2026 JobPortal. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

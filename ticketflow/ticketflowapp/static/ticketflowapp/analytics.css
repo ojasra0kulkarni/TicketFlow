@@ -1,0 +1,122 @@
+/* ===== GLOBAL ===== */
+
+body {
+    margin: 0;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: #f8fafc;
+    padding: 40px;
+    color: #1e293b;
+}
+
+.dashboard {
+    max-width: 1200px;
+    margin: auto;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 40px;
+}
+
+/* ===== CARD GRID ===== */
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.card {
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+.card h2 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* ===== SECTION STYLE ===== */
+
+.section {
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    margin-bottom: 30px;
+}
+
+.section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* ===== LIST STYLE ===== */
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+li:last-child {
+    border-bottom: none;
+}
+
+/* ===== BADGES ===== */
+
+.badge {
+    background: #e2e8f0;
+    color: #1e293b;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge.priority {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.badge.city {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* ===== CHART CONTAINER ===== */
+
+.chart-container {
+    margin-top: 20px;
+}
+.chart-img {
+    width: 100%;
+    max-width: 650px;
+    border-radius: 12px;
+    margin-top: 15px;
+}
+
+.section img {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
