@@ -2,16 +2,14 @@ from django.db.models import Count, Avg, F, ExpressionWrapper, DurationField
 from .models import Ticket
 
 
-def get_ticket_analytics():
-    total = Ticket.objects.count()
-
-    status_data = Ticket.objects.values('status').annotate(total=Count('status'))
-
-    priority_data = Ticket.objects.values('priority').annotate(total=Count('priority'))
-
-    city_data = Ticket.objects.values('address').annotate(total=Count('address')).order_by('-total')
-
-    resolved = Ticket.objects.filter(closed_at__isnull=False)
+def get_ticket_analytics(queryset):
+    total = queryset.count()
+    status_data = queryset.values('status').annotate(total=Count('status'))
+    priority_data = queryset.values('priority').annotate(total=Count('priority'))
+    city_data = queryset.values('address').annotate(
+        total=Count('address')
+    ).order_by('-total')
+    resolved = queryset.filter(closed_at__isnull=False)
 
     avg_resolution = resolved.annotate(
         duration=ExpressionWrapper(
@@ -20,10 +18,19 @@ def get_ticket_analytics():
         )
     ).aggregate(avg_time=Avg('duration'))
 
+    avg_time = avg_resolution["avg_time"]
+
+    if avg_time:
+        total_seconds = avg_time.total_seconds()
+        hours = round(total_seconds / 3600, 2)
+        formatted_avg = f"{hours} hrs"
+    else:
+        formatted_avg = "0 hrs"
+
     return {
         "total": total,
         "status_data": status_data,
         "priority_data": priority_data,
         "city_data": city_data,
-        "avg_resolution": avg_resolution["avg_time"],
+        "avg_resolution": formatted_avg,
     }

@@ -1,16 +1,17 @@
 import os
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import seaborn as sns
 from django.conf import settings
 from .models import Ticket
 
 sns.set(style="whitegrid")
-def generate_priority_dashboard():
+def generate_priority_dashboard(queryset):
     os.makedirs(settings.MEDIA_ROOT, exist_ok=True)
-
-    qs = Ticket.objects.all().values(
+    qs = queryset.values(
         "ticket_id",  
         "priority",
         "status",
@@ -19,7 +20,6 @@ def generate_priority_dashboard():
         "address",
         "subject"
     )
-
     df = pd.DataFrame(list(qs))
 
     if df.empty:
@@ -29,10 +29,6 @@ def generate_priority_dashboard():
     df["raised_at"] = pd.to_datetime(df["raised_at"], utc=True)
     df["closed_at"] = pd.to_datetime(df["closed_at"], utc=True)
 
-   
-    # Priority Heat
- 
-
     total_by_priority = df.groupby("priority").size()
     open_df = df[df["status"] == "OPEN"]
     open_by_priority = open_df.groupby("priority").size()
@@ -41,15 +37,12 @@ def generate_priority_dashboard():
 
     plt.figure(figsize=(6,4))
     heat_percent.plot(kind="bar")
-    plt.title("Open Ticket % by Priority")
+    plt.title("Open Ticket % by Priority",fontsize=14, fontweight="bold")
     plt.ylabel("Percentage")
+    plt.xticks(fontweight="bold")
     plt.tight_layout()
     plt.savefig(os.path.join(settings.MEDIA_ROOT, "priority_heat.png"))
     plt.close()
-
-  
-    # AVG Resolution by Priority
-  
 
     resolved_df = df[df["closed_at"].notna()].copy()
 
@@ -73,33 +66,6 @@ def generate_priority_dashboard():
     else:
         avg_path = False
 
-   
-    #  Escalation Risk
-    threshold_hours = 24
-    p1_open = open_df[open_df["priority"] == "P1"].copy()
-
-    risk_percent = 0
-
-    if not p1_open.empty:
-        p1_open["open_hours"] = (
-            (pd.Timestamp.now(tz="UTC") - p1_open["raised_at"])
-            .dt.total_seconds() / 3600
-        )
-
-        risky = p1_open[p1_open["open_hours"] > threshold_hours]
-        risk_percent = (len(risky) / len(p1_open)) * 100
-
-    plt.figure(figsize=(6,4))
-    plt.bar(["Escalation Risk"], [risk_percent])
-    plt.ylim(0,100)
-    plt.title("P1 Open > 24h (%)")
-    plt.tight_layout()
-    plt.savefig(os.path.join(settings.MEDIA_ROOT, "risk_meter.png"))
-    plt.close()
-
-    red_alert = risk_percent > 30
-
-
     # CITY ANALYTICS
  
 
@@ -114,10 +80,8 @@ def generate_priority_dashboard():
         closed_tickets=("closed_at", lambda x: x.notna().sum()),
         avg_resolution=("resolution_hours", "mean")
     ).reset_index()
-
-   
+    
     #  Top 5 Problem Cities
-   
 
     top5 = city_stats.sort_values(
         by="total_tickets",
@@ -132,10 +96,8 @@ def generate_priority_dashboard():
     plt.savefig(os.path.join(settings.MEDIA_ROOT, "top5_cities.png"))
     plt.close()
 
-    
     #  Fastest & Slowest City
    
-
     resolved_cities = city_stats.dropna(subset=["avg_resolution"])
 
     if not resolved_cities.empty:
@@ -149,11 +111,9 @@ def generate_priority_dashboard():
     else:
         fastest_city = "N/A"
         slowest_city = "N/A"
-
   
     # City Performance Score
-   
-
+    
     city_stats["performance_score"] = np.where(
       city_stats["avg_resolution"].notna(),
       (city_stats["closed_tickets"] / city_stats["total_tickets"]) *
@@ -224,9 +184,6 @@ def generate_priority_dashboard():
     return {
         "heat_chart": settings.MEDIA_URL + "priority_heat.png",
         "avg_chart": settings.MEDIA_URL + "avg_resolution.png" if avg_path else None,
-        "risk_chart": settings.MEDIA_URL + "risk_meter.png",
-        "risk_percent": round(risk_percent, 2),
-        "red_alert": red_alert,
         "fastest_city": fastest_city,
         "slowest_city": slowest_city,
         "top5_chart": settings.MEDIA_URL + "top5_cities.png",

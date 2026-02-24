@@ -12,6 +12,32 @@
 
 <div class="dashboard">
     <h1> Ticket Analytics Dashboard</h1>
+    <form method="get" class="filter-form">
+
+        <select name="city">
+            <option value="">All Cities</option>
+            {% for c in cities %}
+                <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+        </select>
+    
+        <select name="priority">
+            <option value="">All Priority</option>
+            {% for p in priorities %}
+                <option value="{{ p }}">{{ p }}</option>
+            {% endfor %}
+        </select>
+    
+        <select name="status">
+            <option value="">All Status</option>
+            {% for s in statuses %}
+                <option value="{{ s }}">{{ s }}</option>
+            {% endfor %}
+        </select>
+    
+    
+        <button type="submit">Apply Filters</button>
+    </form>
 
     <div class="card-grid">
         <div class="card">
@@ -24,6 +50,7 @@
             <p>{{ avg_resolution }}</p>
         </div>
     </div>
+    
 
     <div class="section">
         <h3>Status Breakdown</h3>
@@ -39,14 +66,15 @@
 
     <div class="section">
         <h3>Priority Distribution</h3>
-        <ul>
+    
+        <div class="priority-grid">
             {% for p in priority_data %}
-            <li>
-                {{ p.priority }}
-                <span class="badge priority">{{ p.total }}</span>
-            </li>
+            <div class="priority-card {{ p.priority|lower }}">
+                <h4>{{ p.priority }}</h4>
+                <p>{{ p.total }}</p>
+            </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
 
     <div class="section">
@@ -62,59 +90,83 @@
     </div>
     
     <div class="section">
-        <h3>🔥 Open % by Priority</h3>
-        {% if heat_chart %}
-            <img src="{{ heat_chart }}" class="chart-img">
-        {% else %}
-            <p>No data available.</p>
-        {% endif %}
+        <h2>📊 Priority Analytics</h2>
+
+        <div class="two-column">
+            <div class="chart-card">
+                <h3>🔥 Open % by Priority</h3>
+                {% if heat_chart %}
+                    <img src="{{ heat_chart }}" class="chart-img">
+                {% else %}
+                    <p>No data available.</p>
+                {% endif %}
+            </div>
+
+            <div class="chart-card">
+                <h3>⏳ Avg Resolution Time by Priority</h3>
+                {% if avg_chart %}
+                    <img src="{{ avg_chart }}" class="chart-img">
+                {% else %}
+                    <p>No resolved tickets yet.</p>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
     <div class="section">
-        <h3>⏳ Avg Resolution Time by Priority</h3>
-        {% if avg_chart %}
-            <img src="{{ avg_chart }}" class="chart-img">
-        {% else %}
-            <p>No resolved tickets yet.</p>
-        {% endif %}
+        <h2>🏙️ City Performance Analytics</h2>
+
+        <div class="chart-card">
+            <h3>🏆 Top 5 Problem Cities</h3>
+            {% if top5_chart %}
+                <img src="{{ top5_chart }}" class="chart-img">
+            {% endif %}
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <h3>🏎️ Fastest Resolving City</h3>
+                <p>{{ fastest_city }}</p>
+            </div>
+
+            <div class="card">
+                <h3>🐢 Slowest Resolving City</h3>
+                <p>{{ slowest_city }}</p>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h3>🏅 City Performance Leaderboard</h3>
+            {% if leaderboard_chart %}
+                <img src="{{ leaderboard_chart }}" class="chart-img">
+            {% endif %}
+        </div>
     </div>
 
     <div class="section">
-        <h3>🚨 Escalation Risk Meter</h3>
-        {% if risk_chart %}
-            <img src="{{ risk_chart }}" class="chart-img">
-        {% endif %}
-        <p><strong>Current Risk:</strong> {{ risk_percent }}%</p>
-    </div>
+        <h2>🧠 Problem Analytics</h2>
 
-    <div class="section">
-      <h3>🏆 Top 5 Problem Cities</h3>
-      {% if top5_chart %}
-          <img src="{{ top5_chart }}" class="chart-img">
-      {% endif %}
-    </div>
-    <div class="card-grid">
-    <div class="card">
-        <h2>🏎️ Fastest Resolving City</h2>
-        <p>{{ fastest_city }}</p>
-    </div>
+        <div class="two-column">
+            <div class="chart-card">
+                <h3>💥 Top Recurring Problems</h3>
+                {% if top_subjects_chart %}
+                    <img src="{{ top_subjects_chart }}" class="chart-img">
+                {% else %}
+                    <p>No subject data available.</p>
+                {% endif %}
+            </div>
 
-    <div class="card">
-        <h2>🐢 Slowest Resolving City</h2>
-        <p>{{ slowest_city }}</p>
+            <div class="chart-card">
+                <h3>📊 Problem Cluster Distribution</h3>
+                {% if cluster_chart %}
+                    <img src="{{ cluster_chart }}" class="chart-img">
+                {% else %}
+                    <p>No cluster data available.</p>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    </div>
-
-    <div class="section">
-        <h3>🏅 City Performance Leaderboard</h3>
-        {% if leaderboard_chart %}
-            <img src="{{ leaderboard_chart }}" class="chart-img">
-        {% endif %}
-    </div>
-
 </div>
-
-
 
 </body>
 </html>
