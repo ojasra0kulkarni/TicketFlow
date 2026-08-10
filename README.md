@@ -1,190 +1,46 @@
 # TicketFlow
-Simple ticketing tool that has a frontend and a backend.(This tool is just for practice and demonstration purpose.)
-Project Title
 
-Priority-Aware Ticket Management System with Web Dashboard and Knowledge Retrieval
+A priority-aware ticket management system, built to demonstrate a clean full-stack app rather than enterprise-scale complexity. Practice/demo project — not production-hardened.
 
-Problem Statement
+## Problem it addresses
 
-Organizations that handle operational or technical workflows (IT support desks, internal operations teams, student helpdesks, etc.) receive large numbers of service requests (“tickets”).
-In small or semi-manual environments these tickets are often tracked using spreadsheets, chat groups, or email threads. This creates several systemic issues:
+Small teams (IT desks, internal ops, student helpdesks) often track support tickets in spreadsheets or chat threads: no standardized prioritization, no visibility into ticket state, no audit trail. TicketFlow gives them a lightweight, authenticated ticket tracker instead.
 
-• No standardized prioritization
-• Poor visibility of ticket state
-• No audit trail of actions taken
-• Difficult status updates
-• Hard to extract operational insights
-• Repeated human effort answering similar issues
+## Features
 
-Therefore, there is a need for a lightweight web-based ticket tracking system that:
+- **Authentication** — session-based login (Django `accounts` app)
+- **Ticket lifecycle** — create tickets, filter/sort by priority (P1–P4), update status (Open → Closed), track raised/closed timestamps
+- **Analytics dashboard** — total tickets, breakdown by status/priority/city, average resolution time (`ticketflowapp/analytics.py`)
+- **CSV import/export** — bulk-load tickets via `import_csv.py`, export via `tickets_export.csv`
+- **AI-assisted retrieval** *(planned)* — an `ai` Django app is scaffolded for semantic search over past tickets ("find similar historical tickets by description"); not implemented yet
 
-Standardizes ticket recording
+## Architecture
 
-Tracks lifecycle (open → closed)
+Implemented as a Django monolith with server-rendered templates (an earlier design doc considered a separate Next.js frontend — that was not built; everything here is server-rendered Django):
 
-Enables controlled updates
+```
+TicketFlow/
+  accounts/         auth
+  core/              shared views/templates
+  ticketflowapp/     Ticket model, CRUD views, analytics
+  ai/                 scaffolding for semantic ticket retrieval (planned)
+  ticketflow/        Django project settings/urls
+```
 
-Provides simple analytics
+Ticket fields: ID, priority (P1–P4), status (Open/Closed), subject, description, address/city, order ID, raised/closed timestamps. SQLite by default (`db.sqlite3`).
 
-Allows quick retrieval of historical knowledge
+## Running locally
 
-The system must remain intentionally simple to demonstrate correct understanding of frontend–backend interaction rather than enterprise-level complexity.
+```bash
+cd TicketFlow
+python -m venv venv
+venv\Scripts\activate        # Windows
+pip install django            # no requirements.txt is committed yet — Django is the only hard dependency
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
 
-Objective
+## Target scale
 
-Design and implement a full-stack web application that allows authenticated users to:
-
-• Create tickets
-• View and filter tickets by priority
-• Update ticket status and remarks
-• Track history of ticket handling
-• View simple analytics dashboard
-• Retrieve similar past tickets using semantic search (optional RAG extension)
-
-Target dataset scale: ≈ 1000 tickets
-
-Functional Requirements
-Authentication
-
-Users must log in before accessing the system.
-
-Purpose:
-Not security complexity — but demonstration of session/state handling across frontend and backend.
-
-Ticket Entity
-
-Each ticket contains:
-
-Ticket ID
-Priority: P1 / P2 / P3
-Description
-Status: Open / Closed
-Remarks (editable)
-Timestamp
-
-Core Features
-Ticket Listing Page
-
-Displays all tickets.
-
-Capabilities:
-• Filter by priority
-• Sort by status
-• Visual differentiation of P1 / P2 / P3
-• Click → open detailed ticket view
-
-This demonstrates API data fetching + UI rendering.
-
-Ticket Detail Page
-
-Shows full information of selected ticket.
-
-Actions allowed:
-• Change status (Open → Closed)
-• Add remarks
-
-This demonstrates:
-State mutation → backend update → frontend refresh
-
-Ticket Creation
-
-Users can add a new ticket from UI.
-
-Purpose:
-Demonstrates POST request + persistence.
-
-Analytics Page
-
-Simple aggregated statistics:
-
-• Number of open tickets
-• Closed tickets
-• Tickets by priority
-• Possibly: average closure distribution
-
-No advanced BI — only aggregation queries.
-
-This demonstrates backend data processing + frontend visualization.
-
-Optional RAG Extension (If time permits)
-
-Add a search box:
-
-User types a problem description → system retrieves similar past tickets.
-
-Purpose:
-Not chatbot — only retrieval assistance.
-
-This demonstrates understanding of:
-Data indexing vs data storage
-
-Non-Functional Requirements
-
-The system intentionally optimizes for clarity rather than scale:
-
-• Supports ~1000 records
-• Single organization usage
-• No real-time synchronization needed
-• No distributed systems required
-
-Goal: demonstrate fundamentals, not infrastructure engineering.
-
-System Architecture (Conceptual)
-
-Client (Next.js UI)
-↓ HTTP/JSON
-Server (Django REST backend)
-↓
-Database (ticket storage)
-
-Optional:
-Vector Index (for retrieval search)
-
-This project specifically demonstrates separation of concerns:
-Presentation ↔ Business Logic ↔ Data
-
-Rendering Strategy (Important Design Choice)
-
-You should use a hybrid model:
-
-Use Server-Side Rendering (SSR)
-
-For:
-• Ticket list page
-• Analytics dashboard
-
-Reason:
-Data changes frequently → must always be fresh
-Tickets are operational data, not static content
-
-Use Client-Side Rendering (CSR)
-
-For:
-• Ticket detail interaction
-• Status updates
-• Adding remarks
-
-Reason:
-Interactive updates without page reload
-Better UX and demonstrates API integration
-
-Do NOT use Static Site Generation (SSG)
-
-Because:
-Tickets are dynamic operational data
-Pre-rendering would be conceptually incorrect
-
-Why This Project Is Academically Strong
-
-This project demonstrates real understanding of:
-
-Authentication state
-REST communication
-CRUD lifecycle
-Frontend state management
-Server business logic
-Data modeling
-Data aggregation
-Optional semantic retrieval
-
-Not just “making pages” — but understanding system behavior.
+Designed for clarity at ~1,000 tickets / single-organization usage — not distributed-systems scale.
